@@ -1,0 +1,30 @@
+# WfMP containers
+
+version: '3'
+
+services:
+  database:
+    image: postgres:9.6
+    ports:
+      - "5435:5432"
+    privileged: true
+    volumes:
+      - ./wfmp-manager/db/initdb.sh:/docker-entrypoint-initdb.d/init-database.sh
+    environment:
+      - POSTGRES_USER=wfmp_user
+      - POSTGRES_PASSWORD=jk9CidBYAX
+      - POSTGRES_DB=wfmp_manager
+  web:
+    build: wfmp-manager
+    ports:
+      - "8580:8580"
+    links:
+      - database
+  rabbitmq:
+    image: rabbitmq:3.6-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - ./rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro

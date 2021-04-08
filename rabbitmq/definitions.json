@@ -1,0 +1,59 @@
+{
+    "rabbit_version": "3.6.6",
+    "users": [
+      {
+        "name": "wfmp",  
+        "password": "wfmp",
+        "hashing_algorithm": "rabbit_password_hashing_sha256",
+        "tags": "administrator"
+      }
+    ],
+
+    "vhosts":[
+        {
+            "name": "\/vhost1"
+        }
+    ],
+    "permissions": [
+        {
+            "user": "wfmp",
+            "vhost": "\/vhost1",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        }
+    ],
+    "exchanges": [
+        {
+          "name": "service_data",
+          "vhost": "\/vhost1",
+          "type": "topic",
+          "durable": true,
+          "auto_delete": false,
+          "internal": false,
+          "arguments": {}
+        }
+    ],
+    "queues":[
+        {
+            "name":"wfmp_queue",
+            "vhost":"\/vhost1",
+            "durable":true,
+            "auto_delete":false,
+            "arguments":{}
+        }
+    ],
+    "bindings":[
+        {
+            "source":"service_data",
+            "vhost":"\/vhost1",
+            "destination":"wfmp_queue",
+            "destination_type":"queue",
+            "routing_key":"wfmp.#",
+            "arguments":{}
+        }
+    ]
+}
+
+
+

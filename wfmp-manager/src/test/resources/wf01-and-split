@@ -1,0 +1,30 @@
+workflow BloodPressureAnalysis {
+	start task {
+		call getBloodPressure()->FromService->BloodPressureSensor
+	}
+
+	task BloodPressureSensor {
+		case onReceive BloodPressure {
+			call bloodPressureAnalyze(BloodPressure)->FromService->HealthcareAnalytics
+			call registerBloodpressure(BloodPressure)->FromService->PatientHistory
+		}
+	}
+
+	task HealthcareAnalytics {
+		case onReceive HealthAssessment {
+			with isTrue(HealthAssessment.diagnosis) {
+				end.workflow.export HealthAssessment
+			}
+		}
+		case onReceive HealthAssessment {
+			with isFalse(HealthAssessment.diagnosis) {
+				call getBloodPressure()->FromService->BloodPressureSensor
+			}
+		}
+	}
+	task PatientHistory {
+		case onReceive MedicalReport {
+			end.workflow
+		}
+	}
+}
